@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Quantum AI Bot - {{ pair }}</title>
+</head>
+<body>
+    <h1>Quantum AI Bot Dashboard</h1>
+    <p><strong>Pair:</strong> {{ pair }}</p>
+    <p><strong>Exchange:</strong> {{ exchange }}</p>
+    <p><strong>Status:</strong> {% if bot_running %}Active{% else %}Inactive{% endif %}</p>
+    <p><strong>Quantum Balance:</strong> {{ quantum_balance }} USDT</p>
+    
+    <h2>Current Indicators</h2>
+    <p><strong>Price:</strong> {{ current_price }}</p>
+    <p><strong>EMA:</strong> {{ EMA }}</p>
+    <p><strong>RSI:</strong> {{ RSI }}</p>
+    
+    <form method="post" action="{% url 'quantum-bot-control' username=username pair=pair %}">
+        {% csrf_token %}
+        <button type="submit" name="action" value="start">Start Bot</button>
+        <button type="submit" name="action" value="stop">Stop Bot</button>
+    </form>
+</body>
+</html>

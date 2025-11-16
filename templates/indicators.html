@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Trading Indicators - {{ Pair }}</title>
+</head>
+<body>
+    <h1>Live Indicators for {{ Pair }}</h1>
+    <p><strong>User:</strong> {{ username }}</p>
+    <p><strong>Current Price:</strong> {{ Current_Price }}</p>
+    <p><strong>EMA:</strong> {{ EMA }}</p>
+    <p><strong>RSI:</strong> {{ RSI }}</p>
+    <p><strong>RSI Color:</strong> {{ RSI_color }}</p>
+    <p><strong>Bollinger Bands:</strong> {{ BB }}</p>
+    <p><strong>Bot Status:</strong> {% if bot_running %}Running{% else %}Stopped{% endif %}</p>
+</body>
+</html>
