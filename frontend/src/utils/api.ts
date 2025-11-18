@@ -139,6 +139,7 @@ export const endpoints = {
   // Bots
   bots: '/api/v1/bots/',
   createBot: '/api/v1/bots/',
+  bulkAction: '/api/v1/bots/bulk-action/',
   updateBot: (id: string) => `/api/v1/bots/${id}/`,
   deleteBot: (id: string) => `/api/v1/bots/${id}/`,
 
