@@ -63,6 +63,7 @@ urlpatterns = [
     path('bots/', include([
         path('', BotListView.as_view(), name='bot-list'),
         path('create/', BotCreateView.as_view(), name='bot-create'),
+        path('bulk-action/', BotBulkActionView.as_view(), name='bot-bulk-action'),
         path('<uuid:id>/', BotDetailView.as_view(), name='bot-detail'),
         path('<uuid:id>/toggle/', BotToggleView.as_view(), name='bot-toggle'),
         path('<uuid:id>/trades/', TradeLogView.as_view(), name='bot-trades'),
