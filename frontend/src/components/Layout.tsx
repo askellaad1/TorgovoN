@@ -169,7 +169,7 @@ export default function Layout({ children }: LayoutProps) {
             </button>
 
             <div className="flex items-center space-x-4">
-              {/* Notification bell could go here */}
+              <NotificationCenter />
               <div className="text-sm text-gray-600">
                 {new Date().toLocaleDateString('en-US', {
                   weekday: 'short',
