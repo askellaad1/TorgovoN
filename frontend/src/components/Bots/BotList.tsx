@@ -254,10 +254,29 @@ export default function BotList() {
   }
 
   const filteredBots = bots?.filter(bot => {
+    // Basic filter
     if (filter === 'all') return true
     if (filter === 'active') return bot.is_active
     if (filter === 'inactive') return !bot.is_active
-    return bot.bot_type === filter
+    if (filter !== 'all' && bot.bot_type !== filter) return false
+
+    // Search filter
+    if (search && !bot.name.toLowerCase().includes(search.toLowerCase()) &&
+        !bot.trading_pair.toLowerCase().includes(search.toLowerCase())) {
+      return false
+    }
+
+    // Advanced filters
+    if (advancedFilter.exchange && bot.exchange_account.exchange_name !== advancedFilter.exchange) {
+      return false
+    }
+
+    if (advancedFilter.profitability !== 'all' && bot.performance) {
+      if (advancedFilter.profitability === 'profitable' && bot.performance.profit_loss <= 0) return false
+      if (advancedFilter.profitability === 'loss' && bot.performance.profit_loss > 0) return false
+    }
+
+    return true
   }) || []
 
   const getBotTypeColor = (type: string) => {
