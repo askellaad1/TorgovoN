@@ -1,5 +1,7 @@
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.views import APIView
+
 from .models import Referral, ReferralBonusConfig
 from .serializers import ReferralSerializer, ReferralBonusSerializer
 from .services import ReferralService
@@ -20,7 +22,7 @@ class AdminReferralBonusConfigView(generics.ListCreateAPIView):
     permission_classes = [IsAdminUser]
 
 
-class UserReferralStatsView(generics.RetrieveAPIView):
+class UserReferralStatsView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):

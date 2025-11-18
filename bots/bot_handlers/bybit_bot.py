@@ -194,7 +194,7 @@ class BybitBotHandler(BaseBot):
                 self.reason = 'Bybit EMA + BOLLINGER BANDS BUY LONG (CASE2)) '
                 detail = self.calculated_grid_orders(data)
                 self.save_order('BUY', 'Bybit EMA + BOLLINGER BANDS BUY LONG (CASE2)) ', detail)
-                self.print_details("BUY2", details=detail)
+                self.print_details("BUY2", detail=detail)
 
             elif self.RsiBuyCondition and self.BBBuyCondition and (
                     self.pair_config['BB_RSI_Entry'] == 'buy' or self.pair_config['BB_RSI_Entry'] == 'both'):

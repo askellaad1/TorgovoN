@@ -21,7 +21,7 @@ services:
 
   web:
     build: .
-    command: gunicorn --bind 0.0.0.0:8000 --workers 4 --timeout 120 Torgovo.wsgi:application
+    command: gunicorn --bind 0.0.0.0:8000 --workers 4 --timeout 120 TorgovoN.wsgi:application
     environment:
       - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
       - DEBUG=${DEBUG}
@@ -39,7 +39,7 @@ services:
 
   celery:
     build: .
-    command: celery -A Torgovo worker --loglevel=info --concurrency=4
+    command: celery -A TorgovoN worker --loglevel=info --concurrency=4
     environment:
       - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
       - DB_HOST=db
@@ -52,7 +52,7 @@ services:
 
   celery-beat:
     build: .
-    command: celery -A Torgovo beat --loglevel=info
+    command: celery -A TorgovoN beat --loglevel=info
     environment:
       - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
       - DB_HOST=db

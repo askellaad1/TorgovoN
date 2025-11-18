@@ -21,7 +21,7 @@ from django.core.cache import cache
 
 from users.models import User
 from bots.models import Bot
-from bots.services import trading_manager
+from bots.services import bot_manager
 from bots.serializers import BotListSerializer
 
 logger = logging.getLogger('Torgovo.QuantumAI')
@@ -47,7 +47,7 @@ class BinanceEMAView(APIView):
             user = await sync_to_async(User.objects.get)(username=user_name)
 
             # Update bot state in Redis
-            key = trading_manager._get_bot_redis_key(str(user.id), pair_symbol, exchange)
+            key = bot_manager._get_bot_redis_key(str(user.id), pair_symbol, exchange)
             bot_data = cache.get(key)
 
             if bot_data:
@@ -87,7 +87,7 @@ class BinanceRSIView(APIView):
             user = await sync_to_async(User.objects.get)(username=user_name)
 
             # Update bot state
-            key = trading_manager._get_bot_redis_key(str(user.id), pair_symbol, exchange)
+            key = bot_manager._get_bot_redis_key(str(user.id), pair_symbol, exchange)
             bot_data = cache.get(key)
 
             if bot_data:
@@ -126,7 +126,7 @@ class BinanceBBView(APIView):
             user = await sync_to_async(User.objects.get)(username=user_name)
 
             # Update bot state
-            key = trading_manager._get_bot_redis_key(str(user.id), pair_symbol, exchange)
+            key = bot_manager._get_bot_redis_key(str(user.id), pair_symbol, exchange)
             bot_data = cache.get(key)
 
             if bot_data:
@@ -159,7 +159,7 @@ class QuantumAIBotView(APIView):
             if not exchange:
                 return JsonResponse({"error": "No exchange configured"}, status=400)
 
-            bot_data = await sync_to_async(trading_manager.get_bot)(
+            bot_data = await sync_to_async(bot_manager.get_bot)(
                 str(user.id), pair, exchange.exchange_name
             )
 
@@ -248,7 +248,7 @@ class QuantumAIBotView(APIView):
                     bot_instance.config = quantum_config
                     await sync_to_async(bot_instance.save)()
 
-                bot_key = await sync_to_async(trading_manager.create_bot)(bot_instance, quantum_config)
+                bot_key = await sync_to_async(bot_manager.create_bot)(bot_instance, quantum_config)
 
                 return JsonResponse({
                     "success": True,
@@ -257,7 +257,7 @@ class QuantumAIBotView(APIView):
                 })
 
             elif action == 'stop':
-                stopped = await sync_to_async(trading_manager.stop_bot)(
+                stopped = await sync_to_async(bot_manager.stop_bot)(
                     str(user.id), pair, exchange.exchange_name
                 )
                 return JsonResponse({
@@ -384,7 +384,7 @@ class AdminQuantumTradeResultCreateView(generics.CreateAPIView):
         QuantumDistributionService.distribute_profit_loss(trade_result)
 
 
-class UserQuantumBalanceView(generics.RetrieveAPIView):
+class UserQuantumBalanceView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):

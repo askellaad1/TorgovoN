@@ -61,10 +61,10 @@ class QuantumDistributionService:
                     )
 
 
-@staticmethod
-def get_user_share(user: User):
-    """Calculate user's share in the pool"""
-    pool = QuantumPool.objects.get(id=1)
-    if pool.total_invested == 0:
-        return 0
-    return user.quantum_balance / pool.total_invested
+    @staticmethod
+    def get_user_share(user: User):
+        """Calculate user's share in the pool"""
+        pool = QuantumPool.objects.get(id=1)
+        if pool.total_invested == 0:
+            return 0
+        return user.quantum_balance / pool.total_invested

@@ -1,7 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, UserManager
 from django.utils import timezone
-from core.utils import generate_uuid, encrypt_data, mask_key
+from rest_framework_simplejwt.tokens import RefreshToken
+
+from core.utils import generate_uuid, encrypt_data, mask_key, decrypt_data
 import uuid
 
 

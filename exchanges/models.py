@@ -27,6 +27,7 @@ class ExchangeAccount(models.Model):
     id = models.UUIDField(primary_key=True, default=generate_uuid, editable=False)
     user = models.ForeignKey('users.User', on_delete=models.CASCADE, related_name='exchange_accounts')
     exchange_status = models.ForeignKey(ExchangeStatus, on_delete=models.PROTECT)
+    exchange_name = models.CharField(max_length=50)
     api_key = models.CharField(max_length=255)
     api_secret = models.CharField(max_length=255)
     is_active = models.BooleanField(default=True)

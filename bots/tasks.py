@@ -4,7 +4,7 @@ from celery import shared_task
 from django.utils import timezone
 from .models import Bot, TradeLog
 from exchanges.manager import ExchangeManager
-from bots.services import trading_manager
+
 import time
 import json
 import logging
@@ -21,6 +21,7 @@ def execute_bot_loop(self, bot_id: str):
     """
     try:
         from .services import BotManagerService
+        from bots.services import bot_manager
         bot_instance = Bot.objects.get(id=bot_id)
 
         if not bot_instance.is_active:
@@ -29,7 +30,7 @@ def execute_bot_loop(self, bot_id: str):
 
         # Get handler class
         exchange_name = bot_instance.exchange_account.exchange_name.lower()
-        handler_class = trading_manager.HANDLERS.get(exchange_name)
+        handler_class = bot_manager.HANDLERS.get(exchange_name)
 
         if not handler_class:
             logger.error(f"Unsupported exchange: {exchange_name} for bot {bot_id}")
@@ -62,6 +63,7 @@ def cleanup_inactive_bots():
     from django.utils import timezone
     from datetime import timedelta
     from .services import BotManagerService
+    from bots.services import bot_manager
 
     inactive_bots = Bot.objects.filter(
         is_active=True,
@@ -69,23 +71,25 @@ def cleanup_inactive_bots():
     )
 
     for bot in inactive_bots:
-        trading_manager.stop_bot(str(bot.user.id), bot.trading_pair, bot.exchange_account.exchange_name)
+        bot_manager.stop_bot(str(bot.user.id), bot.trading_pair, bot.exchange_account.exchange_name)
 
 
 @shared_task
 def refresh_all_user_bots(user_id: str):
+    from bots.services import bot_manager
     """Refresh all bots for a user"""
-    trading_manager.refresh_all_bots_for_user(user_id)
+    bot_manager.refresh_all_bots_for_user(user_id)
 
 
 @shared_task(bind=True, max_retries=3)
 def execute_custom_trade(self, bot_id, signal_data):
 
     """Execute a single trade for custom bot"""
+    from .services import BotManagerService
+    bot = Bot.objects.get(id=bot_id, is_active=True)
     try:
-        from .services import BotManagerService
         from exchanges.manager import ExchangeManager
-        bot = Bot.objects.get(id=bot_id, is_active=True)
+
         exchange_manager = ExchangeManager()
 
         # Validate limits

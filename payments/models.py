@@ -24,6 +24,7 @@ class SubscriptionPlan(models.Model):
     allows_telegram_signals = models.BooleanField(default=False)
     allows_telegram_alerts = models.BooleanField(default=False)
     allows_quantum_ai = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
 
     def __str__(self):
         return self.name
