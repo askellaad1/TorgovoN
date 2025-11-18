@@ -433,9 +433,20 @@ export default function BotList() {
       {/* Bots Grid */}
       <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {filteredBots.map((bot) => (
-          <div key={bot.id} className="bg-white rounded-lg shadow overflow-hidden">
-            <div className="p-6">
-              <div className="flex items-center justify-between">
+          <div key={bot.id} className="bg-white rounded-lg shadow overflow-hidden relative">
+            <input
+              type="checkbox"
+              checked={selectedBots.includes(bot.id)}
+              onChange={(e) => {
+                if (e.target.checked) {
+                  setSelectedBots([...selectedBots, bot.id])
+                } else {
+                  setSelectedBots(selectedBots.filter(id => id !== bot.id))
+                }
+              }}
+              className="absolute top-4 left-4 z-10 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+            />
+            <div className="p-6 pl-12">
                 <div>
                   <h3 className="text-lg font-medium text-gray-900">{bot.name}</h3>
                   <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getBotTypeColor(bot.bot_type)}`}>
