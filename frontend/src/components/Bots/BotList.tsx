@@ -253,6 +253,54 @@ export default function BotList() {
     }
   }
 
+  const bulkActionMutation = useMutation({
+    mutationFn: async ({ action, botIds }: { action: string; botIds: string[] }) => {
+      const response = await api.post(`${endpoints.bots}bulk-action/`, { action, bot_ids: botIds })
+      return response.data
+    },
+    onSuccess: (_, { action }) => {
+      toast.success(`${action} action completed successfully!`)
+      setSelectedBots([])
+    },
+    onError: () => toast.error('Bulk action failed'),
+  })
+
+  const exportBots = (format: 'csv' | 'json') => {
+    const exportData = filteredBots.map(bot => ({
+      name: bot.name,
+      type: bot.bot_type,
+      pair: bot.trading_pair,
+      exchange: bot.exchange_account.exchange_name,
+      status: bot.is_active ? 'Active' : 'Inactive',
+      profit: bot.performance?.profit_loss || 0,
+      success_rate: bot.performance?.success_rate || 0,
+      trades: bot.performance?.total_trades || 0,
+    }))
+
+    if (format === 'csv') {
+      const csv = [
+        Object.keys(exportData[0] || {}).join(','),
+        ...exportData.map(row => Object.values(row).join(','))
+      ].join('\n')
+
+      const blob = new Blob([csv], { type: 'text/csv' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = 'bots-export.csv'
+      a.click()
+    } else {
+      const json = JSON.stringify(exportData, null, 2)
+      const blob = new Blob([json], { type: 'application/json' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = 'bots-export.json'
+      a.click()
+    }
+    toast.success(`Bots exported as ${format.toUpperCase()}`)
+  }
+
   const filteredBots = bots?.filter(bot => {
     // Basic filter
     if (filter === 'all') return true
