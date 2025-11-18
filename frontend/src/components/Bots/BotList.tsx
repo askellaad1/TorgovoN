@@ -202,6 +202,9 @@ function CreateBotModal({ isOpen, onClose }: CreateBotModalProps) {
 export default function BotList() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [filter, setFilter] = useState('all')
+  const [search, setSearch] = useState('')
+  const [selectedBots, setSelectedBots] = useState<string[]>([])
+  const [advancedFilter, setAdvancedFilter] = useState({ exchange: '', profitability: 'all', dateRange: '' })
 
   const { data: bots, isLoading, error } = useQuery<Bot[]>({
     queryKey: ['bots'],
