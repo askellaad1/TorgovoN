@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { PlusIcon, PlayIcon, StopIcon, PencilIcon, TrashIcon, EyeIcon } from '@heroicons/react/24/outline'
+import { PlusIcon, PlayIcon, StopIcon, PencilIcon, TrashIcon, EyeIcon, FunnelIcon, MagnifyingGlassIcon, DocumentArrowDownIcon, CheckIcon } from '@heroicons/react/24/outline'
 import { api, endpoints } from '../../utils/api'
 import toast from 'react-hot-toast'
 
