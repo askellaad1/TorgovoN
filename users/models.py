@@ -71,27 +71,3 @@ class UserManager(models.Manager):
         return self.create_user(email=email, password=password, **extra_fields)
 
 
-class ExchangeAccount(models.Model):
-    id = models.UUIDField(primary_key=True, default=generate_uuid, editable=False)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='exchange_accounts')
-    exchange_name = models.CharField(max_length=50)  # binance, bybit, etc.
-    api_key_encrypted = models.TextField()
-    api_secret_encrypted = models.TextField()
-    is_active = models.BooleanField(default=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    @property
-    def masked_api_key(self):
-        try:
-            decrypted = decrypt_data(self.api_key_encrypted)
-            return mask_key(decrypted)
-        except:
-            return "****"
-
-    def save(self, *args, **kwargs):
-        if not self.api_key_encrypted.startswith('gAAAAA'):
-            self.api_key_encrypted = encrypt_data(self.api_key_encrypted)
-        if not self.api_secret_encrypted.startswith('gAAAAA'):
-            self.api_secret_encrypted = encrypt_data(self.api_secret_encrypted)
-        super().save(*args, **kwargs)
