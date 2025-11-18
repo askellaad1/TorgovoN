@@ -14,6 +14,7 @@ from bots.views import (
     BotListView,
     BotToggleView,
     BotDetailView,
+    BotBulkActionView,
     TradeLogView,
     WebhookHandlerView
 )
