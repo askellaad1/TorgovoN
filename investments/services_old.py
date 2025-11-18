@@ -126,7 +126,6 @@ class QuantumDistributionService:
     def calculate_distribution_amounts(self, trade_result):
         """
         Calculate individual distribution amounts based on trade result and user shares
-        Formula: (user_investment / total_pool) * shown_adjustment
         """
         distributions = {}
 
@@ -258,7 +257,7 @@ class QuantumDistributionService:
                 user.quantum_balance -= amount
                 user.save()
 
-                # Create withdrawal record for audit trail
+                # Create withdrawal record (would be in a separate model)
                 withdrawal_data = {
                     'user': user,
                     'amount': amount,

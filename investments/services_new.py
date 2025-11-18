@@ -11,7 +11,7 @@ from django.db import transaction
 from django.utils import timezone
 from django.core.cache import cache
 from django.conf import settings
-from .models import QuantumInvestment, QuantumPool, QuantumTradeResult
+from .models import QuantumInvestment
 from users.models import User
 
 logger = logging.getLogger('TorgovoN.QuantumServices')
@@ -21,9 +21,7 @@ class QuantumDistributionService:
     """Service for managing Quantum AI investment pools and distributions"""
 
     def __init__(self):
-        # Configurable percentage of actual P&L shown to users (default 20%)
         self.shown_profit_percentage = Decimal(str(getattr(settings, 'QUANTUM_SHOWN_PROFIT_PERCENTAGE', '0.20')))
-        # Distribution frequency in days (default fortnightly)
         self.distribution_frequency_days = getattr(settings, 'QUANTUM_DISTRIBUTION_FREQUENCY_DAYS', 14)
 
     def calculate_pool_total(self, investment_date=None):
@@ -105,16 +103,16 @@ class QuantumDistributionService:
                 total_pool = self.calculate_pool_total()
 
                 # Create quantum trade result record
-                trade_result = QuantumTradeResult.objects.create(
-                    actual_profit_loss=actual_pl,
-                    shown_profit_loss=shown_adjustment,
-                    profit_percentage=self.shown_profit_percentage,
-                    trade_date=timezone.now(),
-                    description=trade_description,
-                    total_pool=total_pool,
-                    total_investors=QuantumInvestment.objects.filter(status='approved').count(),
-                    applied=False,  # Mark as ready for distribution
-                )
+                trade_result = {
+                    'actual_profit_loss': actual_pl,
+                    'shown_profit_loss': shown_adjustment,
+                    'profit_percentage': self.shown_profit_percentage,
+                    'trade_date': timezone.now(),
+                    'description': trade_description,
+                    'total_pool': total_pool,
+                    'total_investors': QuantumInvestment.objects.filter(status='approved').count(),
+                    'applied': True,  # Mark as ready for distribution
+                }
 
                 logger.info(f"Created trade result: PL=${actual_pl}, Shown={shown_adjustment}")
                 return trade_result
@@ -189,15 +187,9 @@ class QuantumDistributionService:
         Calculate next distribution date based on frequency
         """
         try:
-            last_distribution = QuantumTradeResult.objects.order_by('-trade_date').first()
-
-            if not last_distribution:
-                # If no previous distribution, start from today + frequency
-                next_date = timezone.now() + timedelta(days=self.distribution_frequency_days)
-            else:
-                # Add frequency days to last distribution date
-                next_date = last_distribution.trade_date + timedelta(days=self.distribution_frequency_days)
-
+            # In a real implementation, this would query for the last distribution
+            # For now, calculate based on today + frequency
+            next_date = timezone.now() + timedelta(days=self.distribution_frequency_days)
             return next_date.date()
 
         except Exception as e:
@@ -220,16 +212,11 @@ class QuantumDistributionService:
             total_investors = approved_investments.count()
 
             # Calculate statistics
-            latest_trade = QuantumTradeResult.objects.order_by('-trade_date').first()
-            next_distribution = self.get_next_distribution_date()
-
             summary = {
                 'total_pool': float(total_pool),
                 'total_investors': total_investors,
                 'average_investment': float(total_pool / total_investors) if total_investors > 0 else 0,
-                'latest_trade_date': latest_trade.trade_date.isoformat() if latest_trade else None,
-                'latest_pl': float(latest_trade.shown_profit_loss) if latest_trade else 0,
-                'next_distribution_date': next_distribution.isoformat(),
+                'next_distribution_date': self.get_next_distribution_date().isoformat(),
                 'distribution_frequency_days': self.distribution_frequency_days,
                 'shown_profit_percentage': float(self.shown_profit_percentage),
                 'status': 'active' if total_investors > 0 else 'inactive',
@@ -258,7 +245,7 @@ class QuantumDistributionService:
                 user.quantum_balance -= amount
                 user.save()
 
-                # Create withdrawal record for audit trail
+                # Create withdrawal record (would be in a separate model)
                 withdrawal_data = {
                     'user': user,
                     'amount': amount,

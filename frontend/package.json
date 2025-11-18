@@ -1,0 +1,54 @@
+{
+  "name": "torgovo-frontend",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Torgovo Platform Frontend - Cryptocurrency Trading Bot Management",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.15.0",
+    "axios": "^1.5.0",
+    "react-hook-form": "^7.45.4",
+    "@tanstack/react-query": "^4.32.6",
+    "recharts": "^2.8.0",
+    "clsx": "^2.0.0",
+    "react-hot-toast": "^2.4.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.15",
+    "@types/react-dom": "^18.2.7",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "@vitejs/plugin-react": "^4.0.3",
+    "autoprefixer": "^10.4.15",
+    "eslint": "^8.45.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.3",
+    "postcss": "^8.4.28",
+    "tailwindcss": "^3.3.3",
+    "typescript": "^5.0.2",
+    "vite": "^4.4.5"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
+  "keywords": [
+    "react",
+    "vite",
+    "typescript",
+    "trading-bot",
+    "cryptocurrency",
+    "dashboard"
+  ],
+  "author": "Torgovo Team",
+  "license": "MIT"
+}
