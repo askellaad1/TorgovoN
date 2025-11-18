@@ -44,6 +44,7 @@ interface DashboardData {
 
 export default function Dashboard() {
   const { user } = useAuthStore()
+  const [searchTerm, setSearchTerm] = useState('')
 
   const { data: dashboardData, isLoading, error, refetch } = useQuery<DashboardData>({
     queryKey: ['dashboard'],
