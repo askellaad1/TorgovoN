@@ -48,7 +48,26 @@ class BotListView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return Bot.objects.filter(user=self.request.user)
+        queryset = Bot.objects.filter(user=self.request.user)
+
+        # Filter by status
+        status = self.request.query_params.get('status')
+        if status == 'active':
+            queryset = queryset.filter(is_active=True)
+        elif status == 'inactive':
+            queryset = queryset.filter(is_active=False)
+
+        # Filter by bot type
+        bot_type = self.request.query_params.get('bot_type')
+        if bot_type:
+            queryset = queryset.filter(bot_type=bot_type)
+
+        # Filter by exchange
+        exchange_id = self.request.query_params.get('exchange')
+        if exchange_id:
+            queryset = queryset.filter(exchange_account_id=exchange_id)
+
+        return queryset
 
 
 class BotToggleView(generics.UpdateAPIView):
