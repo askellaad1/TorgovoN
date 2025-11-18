@@ -70,6 +70,38 @@ class BotListView(generics.ListAPIView):
         return queryset
 
 
+class BotBulkActionView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        action = request.data.get('action')
+        bot_ids = request.data.get('bot_ids', [])
+
+        if not bot_ids or not action:
+            return Response({'error': 'Action and bot_ids required'}, status=400)
+
+        bots = Bot.objects.filter(user=request.user, id__in=bot_ids)
+        updated_count = 0
+
+        if action == 'start':
+            for bot in bots:
+                if not bot.is_active:
+                    bot.is_active = True
+                    bot.save()
+                    BotManagerService.activate_bot(bot)
+                    updated_count += 1
+
+        elif action == 'stop':
+            for bot in bots:
+                if bot.is_active:
+                    bot.is_active = False
+                    bot.save()
+                    BotManagerService.deactivate_bot(bot)
+                    updated_count += 1
+
+        return Response({'updated': updated_count, 'action': action})
+
+
 class BotToggleView(generics.UpdateAPIView):
     permission_classes = [IsAuthenticated]
     lookup_field = 'id'
