@@ -295,7 +295,14 @@ export default function Dashboard() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {data.recent_transactions.map((transaction) => (
+              {data.recent_transactions
+                .filter(transaction =>
+                  searchTerm === '' ||
+                  transaction.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                  transaction.status.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                  transaction.amount.toString().includes(searchTerm)
+                )
+                .map((transaction) => (
                 <tr key={transaction.id}>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                     {new Date(transaction.timestamp).toLocaleDateString()}
