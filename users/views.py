@@ -3,7 +3,8 @@ from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.contrib.auth import authenticate, login
 from .serializers import UserRegistrationSerializer, UserDashboardSerializer, ExchangeAccountSerializer
-from .models import User, ExchangeAccount
+from .models import User
+from exchanges.models import ExchangeAccount
 from core.utils import generate_webhook_path, generate_json_template
 from referrals.services import ReferralService
 import uuid
