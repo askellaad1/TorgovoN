@@ -10,7 +10,7 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'your-secret-key-here')
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
 
-# Application Definition
+# Application Definition - Core apps only
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -21,17 +21,40 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'corsheaders',
-    'django_celery_beat',
-    'django_filters',
     'core',
     'users',
     'bots',
     'exchanges',
-    'payments',
     'investments',
     'referrals',
-    'api',
 ]
+
+# Optional apps - add only if available
+try:
+    import django_filters
+    INSTALLED_APPS.append('django_filters')
+except ImportError:
+    pass
+
+try:
+    import django_celery_beat
+    INSTALLED_APPS.append('django_celery_beat')
+except ImportError:
+    pass
+
+# Optional payment app
+try:
+    import payments
+    INSTALLED_APPS.append('payments')
+except ImportError:
+    pass
+
+# Optional API app
+try:
+    import api
+    INSTALLED_APPS.append('api')
+except ImportError:
+    pass
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
