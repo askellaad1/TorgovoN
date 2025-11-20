@@ -1,93 +1,115 @@
-# Quick Start Guide
+# 🚀 Torgovo Platform - Quick Start Guide
 
-## Prerequisites
-- Python 3.8+
-- PostgreSQL
-- Redis
-- Node.js 18+ (for frontend)
-
-## Setup Instructions
-
-### 1. Install Python Dependencies
+## ⚠️ BEFORE YOU START - Install System Dependencies
 ```bash
-# Create virtual environment
+# Windows: Install Visual Studio Build Tools for psycopg2
+# macOS: brew install postgresql  (if you want PostgreSQL)
+# Linux: sudo apt-get install libpq-dev
+```
+
+## ✅ EASY SETUP (Recommended for Development)
+
+### Method 1: Automated Setup Script
+```bash
+# Run the setup script (installs basic dependencies)
+python setup.py
+
+# After setup completes:
+python manage.py makemigrations
+python manage.py migrate
+python manage.py createsuperuser
+python manage.py runserver
+```
+
+### Method 2: Manual Minimal Setup
+```bash
+# 1. Create virtual environment
 python -m venv venv
 
-# Activate virtual environment
+# 2. Activate virtual environment
 # Windows:
 venv\Scripts\activate
 # macOS/Linux:
 source venv/bin/activate
 
-# Install dependencies
-pip install -r requirements.txt
-```
+# 3. Install ONLY essential dependencies
+pip install --upgrade pip
+pip install Django==5.0.2
+pip install djangorestframework==3.14.0
+pip install djangorestframework-simplejwt==5.3.1
+pip install django-cors-headers==4.3.1
+pip install Pillow==10.1.0
 
-### 2. Setup Environment
-```bash
-# Copy environment file
-cp .env.example .env
-
-# Edit .env file with your settings
-# Make sure to set DJANGO_SECRET_KEY, database credentials, etc.
-```
-
-### 3. Database Setup
-```bash
-# Create PostgreSQL database
-createdb torgovo_db
-
-# Run migrations
+# 4. Setup environment (automatically uses SQLite)
 python manage.py makemigrations
 python manage.py migrate
 
-# Create superuser
+# 5. Create superuser
 python manage.py createsuperuser
-```
 
-### 4. Start Development Server
-```bash
-# Start Django development server
+# 6. Start server
 python manage.py runserver
-
-# In another terminal, start Celery worker
-celery -A TorgovoN worker --loglevel=info
-
-# In another terminal, start Celery beat
-celery -A TorgovoN beat --loglevel=info
 ```
 
-### 5. Frontend Setup (Optional)
-```bash
-# Navigate to frontend directory
-cd frontend
+## 🎯 WHAT WAS FIXED
 
-# Install dependencies
-npm install
+### ✅ Requirements.txt Issues Fixed
+- **Removed conflicting packages**: fernet, uuid
+- **Removed problematic packages**: Complex packages causing installation failures
+- **Added minimal working set**: Only essential packages for basic functionality
 
-# Start development server
-npm run dev
-```
+### ✅ Django Import Errors Fixed
+- **Fixed ExchangeAccount imports**: Updated to import from exchanges.models
+- **Added graceful error handling**: Optional apps loaded conditionally
+- **SQLite by default**: No PostgreSQL required for development
 
-## Troubleshooting
+### ✅ Database Setup
+- **Auto-uses SQLite**: No external database needed for development
+- **PostgreSQL optional**: Set DATABASE_URL=1 to use PostgreSQL
 
-### If you get import errors:
-1. Make sure all apps have `__init__.py` files
-2. Check that all requirements are installed
-3. Verify database connection in `.env` file
+## 🔧 TROUBLESHOOTING
 
-### Common Issues:
-- **Database connection failed**: Check PostgreSQL is running and credentials are correct
-- **Redis connection failed**: Make sure Redis server is running
-- **Import errors**: Run `python manage.py check` to diagnose issues
+### 🚨 Common Issues & Solutions
 
-## API Documentation
-Once the server is running, visit:
-- Admin interface: http://localhost:8000/admin/
-- API endpoints: http://localhost:8000/api/v1/
+1. **Installation fails on psycopg2**
+   ```bash
+   # Use SQLite instead (no PostgreSQL needed)
+   # Remove DATABASE_URL from environment
+   unset DATABASE_URL
+   ```
 
-## Production Deployment
-Use Docker for production deployment:
-```bash
-docker-compose up -d
-```
+2. **Import Error: cannot import name 'ExchangeAccount'**
+   ✅ **Already Fixed** - Import paths corrected
+
+3. **URL namespace errors**
+   ✅ **Already Fixed** - Graceful import handling added
+
+4. **Missing module errors**
+   ```bash
+   # Run the minimal setup first
+   python setup.py
+   ```
+
+5. **Server won't start**
+   ```bash
+   # Check for configuration issues
+   python manage.py check
+   ```
+
+## 📱 TESTING YOUR SETUP
+
+Once the server is running:
+
+### Test Admin Panel
+- Visit: http://localhost:8000/admin/
+- Login with your superuser credentials
+
+### Test API
+- Visit: http://localhost:8000/api/v1/
+- Should show available endpoints
+
+## 🎉 Success!
+
+Your Torgovo platform should now be running at:
+- **Admin**: http://localhost:8000/admin/
+- **API**: http://localhost:8000/api/v1/
