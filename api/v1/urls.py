@@ -40,76 +40,29 @@ urlpatterns = [
     # Authentication
     path('auth/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('auth/login/', UserLoginView.as_view(), name='user-login'),
-
-    # Users
-    path('users/', include([
-        path('register/', UserRegistrationView.as_view(), name='user-register'),
-        path('dashboard/', UserDashboardView.as_view(), name='user-dashboard'),
-        path('exchanges/', include([
-            path('', ExchangeAccountListView.as_view(), name='exchange-list'),
-            path('add/', ExchangeAccountCreateView.as_view(), name='exchange-add'),
-        ])),
-    ])),
-
-    # Bots
-    path('bots/', include([
-        path('', BotListView.as_view(), name='bot-list'),
-        path('create/', BotCreateView.as_view(), name='bot-create'),
-        path('bulk-action/', BotBulkActionView.as_view(), name='bot-bulk-action'),
-        path('<uuid:id>/', BotDetailView.as_view(), name='bot-detail'),
-        path('<uuid:id>/toggle/', BotToggleView.as_view(), name='bot-toggle'),
-        path('<uuid:id>/trades/', TradeLogView.as_view(), name='bot-trades'),
-    ])),
-
-    # Webhooks (for TradingView integration)
-    path('webhooks/', include([
-        path('custom-bots/<uuid:bot_id>/', WebhookHandlerView.as_view(), name='webhook-custom'),
-        path('quantum-ai/', QuantumWebhookView.as_view(), name='webhook-quantum'),
-
-        # TradingView indicator updates
-        path('indicators/ema/', BinanceEMAView.as_view(), name='indicator-ema'),
-        path('indicators/rsi/', BinanceRSIView.as_view(), name='indicator-rsi'),
-        path('indicators/bb/', BinanceBBView.as_view(), name='indicator-bb'),
-    ])),
-
-    # Quantum AI
-    path('quantum-ai/', include([
-        path('dashboard/<str:username>/<str:pair>/', QuantumAIBotView.as_view(), name='quantum-dashboard'),
-        path('invest/', include([
-            path('', QuantumInvestmentCreateView.as_view(), name='quantum-invest'),
-            path('my/', QuantumInvestmentListView.as_view(), name='quantum-investments'),
-            path('balance/', UserQuantumBalanceView.as_view(), name='quantum-balance'),
-        ])),
-    ])),
-
-    # Investments (Admin)
-    path('admin/investments/', include([
-        path('<uuid:id>/approve/', AdminQuantumInvestmentApproveView.as_view(), name='admin-approve-investment'),
-        path('trade-result/', AdminQuantumTradeResultCreateView.as_view(), name='admin-add-trade-result'),
-    ])),
-
-    # Payments
-    path('payments/', include([
-        path('', PaymentListView.as_view(), name='payment-history'),
-        path('subscribe/', PaymentCreateView.as_view(), name='payment-subscribe'),
-        path('plans/', SubscriptionPlanListView.as_view(), name='subscription-plans'),
-    ])),
-
-    # Payments (Admin)
-    path('admin/payments/', include([
-        path('<uuid:id>/approve/', AdminPaymentApproveView.as_view(), name='admin-approve-payment'),
-        path('plans/<uuid:id>/', AdminPlanUpdateView.as_view(), name='admin-update-plan'),
-    ])),
-
-    # Referrals
-    path('referrals/', include([
-        path('', ReferralListView.as_view(), name='referral-list'),
-        path('stats/', UserReferralStatsView.as_view(), name='referral-stats'),
-    ])),
-
-    # Referrals (Admin)
-    path('admin/referrals/', include([
-        path('bonus-config/', AdminReferralBonusConfigView.as_view(), name='admin-referral-config'),
-    ])),
 ]
+
+# Only add user paths if views are available
+if UserLoginView:
+    urlpatterns.append(path('auth/login/', UserLoginView.as_view(), name='user-login'))
+
+if UserRegistrationView or UserDashboardView:
+    user_patterns = []
+    if UserRegistrationView:
+        user_patterns.append(path('register/', UserRegistrationView.as_view(), name='user-register'))
+    if UserDashboardView:
+        user_patterns.append(path('dashboard/', UserDashboardView.as_view(), name='user-dashboard'))
+    if user_patterns:
+        urlpatterns.append(path('users/', include(user_patterns)))
+
+# Only add bot paths if views are available
+if BotListView or BotCreateView:
+    bot_patterns = []
+    if BotListView:
+        bot_patterns.append(path('', BotListView.as_view(), name='bot-list'))
+    if BotCreateView:
+        bot_patterns.append(path('create/', BotCreateView.as_view(), name='bot-create'))
+    if BotBulkActionView:
+        bot_patterns.append(path('bulk-action/', BotBulkActionView.as_view(), name='bot-bulk-action'))
+    if bot_patterns:
+        urlpatterns.append(path('bots/', include(bot_patterns)))
