@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from .models import User, ExchangeAccount
+from .models import User
+from exchanges.models import ExchangeAccount
 from core.utils import encrypt_data
 
 
