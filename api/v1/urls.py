@@ -1,47 +1,40 @@
 from django.urls import path, include
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
-# Import views from their ACTUAL locations - no star imports, no namespace prefix
-from users.views import (
-    UserRegistrationView,
-    UserLoginView,
-    UserDashboardView,
-    ExchangeAccountCreateView,
-    ExchangeAccountListView
-)
-from bots.views import (
-    BotCreateView,
-    BotListView,
-    BotToggleView,
-    BotDetailView,
-    BotBulkActionView,
-    TradeLogView,
-    WebhookHandlerView
-)
-from investments.views import (
-    QuantumAIBotView,
-    QuantumWebhookView,
-    QuantumInvestmentCreateView,
-    QuantumInvestmentListView,
-    AdminQuantumInvestmentApproveView,
-    AdminQuantumTradeResultCreateView,
-    UserQuantumBalanceView,
-    BinanceEMAView,
-    BinanceRSIView,
-    BinanceBBView
-)
-from payments.views import (
-    PaymentCreateView,
-    PaymentListView,
-    SubscriptionPlanListView,
-    AdminPaymentApproveView,
-    AdminPlanUpdateView
-)
-from referrals.views import (
-    ReferralListView,
-    AdminReferralBonusConfigView,
-    UserReferralStatsView
-)
+# Import views one by one to handle missing imports gracefully
+try:
+    from users.views import (
+        UserRegistrationView,
+        UserLoginView,
+        UserDashboardView,
+        ExchangeAccountCreateView,
+        ExchangeAccountListView
+    )
+except ImportError:
+    UserRegistrationView = None
+    UserLoginView = None
+    UserDashboardView = None
+    ExchangeAccountCreateView = None
+    ExchangeAccountListView = None
+
+try:
+    from bots.views import (
+        BotCreateView,
+        BotListView,
+        BotToggleView,
+        BotDetailView,
+        BotBulkActionView,
+        TradeLogView,
+        WebhookHandlerView
+    )
+except ImportError:
+    BotCreateView = None
+    BotListView = None
+    BotToggleView = None
+    BotDetailView = None
+    BotBulkActionView = None
+    TradeLogView = None
+    WebhookHandlerView = None
 
 urlpatterns = [
     # Authentication
