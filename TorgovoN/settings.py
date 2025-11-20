@@ -66,17 +66,27 @@ TEMPLATES = [
 WSGI_APPLICATION = 'TorgovoN.wsgi.application'
 ASGI_APPLICATION = 'TorgovoN.asgi.application'
 
-# Database
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DB_NAME', 'torgovo_db'),
-        'USER': os.getenv('DB_USER', 'torgovo_user'),
-        'PASSWORD': os.getenv('DB_PASSWORD', 'torgovo_pass'),
-        'HOST': os.getenv('DB_HOST', 'localhost'),
-        'PORT': os.getenv('DB_PORT', '5432'),
+# Database - Use SQLite for development, PostgreSQL for production
+if os.getenv('DATABASE_URL'):
+    # Use PostgreSQL if DATABASE_URL is set
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.getenv('DB_NAME', 'torgovo_db'),
+            'USER': os.getenv('DB_USER', 'torgovo_user'),
+            'PASSWORD': os.getenv('DB_PASSWORD', 'torgovo_pass'),
+            'HOST': os.getenv('DB_HOST', 'localhost'),
+            'PORT': os.getenv('DB_PORT', '5432'),
+        }
     }
-}
+else:
+    # Use SQLite for development
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 # Password Validation
 AUTH_PASSWORD_VALIDATORS = [
